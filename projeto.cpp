@@ -58,7 +58,7 @@ void insertBin(fstream& arqBin, info*& pais, int& cap){
     cin.getline(pais[cap-1].nome, sizeof(pais[cap-1].nome));
     cout << "Digite o número de habitantes desse país: " << endl;
     cin >> pais[cap-1].pop;
-    cin.ignore(); // Limpa o buffer
+    cin.ignore();
     cout << "Digite o principal idioma falado nesse país: " << endl;
     cin.getline(pais[cap-1].idioma, sizeof(pais[cap-1].idioma));
     cout << "Digite uma breve descrição do país: " << endl;
