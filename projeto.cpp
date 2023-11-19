@@ -5,16 +5,15 @@ using namespace std;
 
 struct info{
     int id;
-    char nome[15];
+    char nome[50];
     int pop;
-    char idioma[15];
+    char idioma[50];
     char desc[300];
 };
 
 void gravaBin(fstream& arqBin, info*&pais, int cap);
 
 void importCSV(ifstream& arqCSV, fstream& arqBin, info*& pais, int cap){
-    cout << "Importando do CSV..." << endl;
     string lixo;
     getline(arqCSV, lixo);
 
@@ -32,7 +31,6 @@ void importCSV(ifstream& arqCSV, fstream& arqBin, info*& pais, int cap){
 }
 
 void gravaBin(fstream& arqBin, info*&pais, int cap){
-    cout << "Gravando dados no arquivo binário..." << endl;
         for(int i = 0; i < cap; i++){
         arqBin.write((char*)(&pais[i].id), sizeof(int));
         arqBin.write(pais[i].nome, sizeof(pais[i].nome));
@@ -44,13 +42,11 @@ void gravaBin(fstream& arqBin, info*&pais, int cap){
 }
 
 void insertBin(fstream& arqBin, info*& pais, int& cap){
-    cout << "Redimensionando o vetor..." << endl;
     cap+=1;
     info* novoPais = new info[cap];
     memcpy(novoPais, pais, sizeof(info)*cap-1);
     delete[] pais;
     pais = novoPais;
-    cout << "Vetor redimensionado." << endl;
     cout << "Inseração de novo país: " << endl;
     cout << "OBS: país será alocado na posição: " << cap << endl;
     pais[cap-1].id = cap;
@@ -68,12 +64,27 @@ void insertBin(fstream& arqBin, info*& pais, int& cap){
 }
 
 void leBin(fstream& arqBin, info*& pais, int cap){
-        for(int i = 0; i < cap; i++){
-        arqBin.read((char*)(&pais[i].id), sizeof(int));
-        arqBin.read(pais[i].nome, sizeof(pais[i].nome));
-        arqBin.read((char*)(&pais[i].pop), sizeof(int));
-        arqBin.read(pais[i].idioma, sizeof(pais[i].idioma));
-        arqBin.read(pais[i].desc, sizeof(pais[i].desc));
+    arqBin.read(reinterpret_cast<char*>(&pais), sizeof(info)*cap);
+    cout << "Leitura dos dados do arquivo binário concluída." << endl;
+}
+
+void printBin(fstream& arqBin, info*& pais, int cap){
+    for(int i = 0; i<cap; i++){
+    char nomeAux[51];
+    strncpy(nomeAux, pais[i].nome, 50);
+    char idiomaAux[51];
+    strncpy(idiomaAux, pais[i].idioma, 50);
+    char descAux[301];
+    strncpy(descAux, pais[i].desc, 300);
+
+    nomeAux[50] = '\0';
+    idiomaAux[50] = '\0';
+    descAux[300] = '\0';
+
+    cout << "ID: " << pais[i].id << endl << "Nome: " << nomeAux << endl << "População: "
+    << pais[i].pop << endl << "Idioma: " << idiomaAux << endl << "Descrição: " << descAux << endl;
+
+    cout << "--------" << endl;
     }
 }
 
@@ -97,6 +108,7 @@ int main(){
     importCSV(arqCSV, arqBin, pais, cap);
     insertBin(arqBin, pais, cap);
     leBin(arqBin, pais, cap);
+    printBin(arqBin, pais, cap);
     arqBin.close();
     arqCSV.close();
     return 0;
