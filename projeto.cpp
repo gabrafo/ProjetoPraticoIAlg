@@ -1,5 +1,5 @@
 /*
-Nomes: Gabriel Fagundes Mesquita Sousa, Gabriel Luis Moreira Castanhede, Bruno Souza Carvalho.
+Nomes: Gabriel Fagundes Mesquita Sousa, Gabriel Luis Moreira Cantanhede, Bruno Souza Carvalho.
 Tema: Países.
 */
 
@@ -52,7 +52,7 @@ void insertBin(fstream& arqBin, info*& pais, int& cap){
     memcpy(novoPais, pais, sizeof(info)*cap-1);
     delete[] pais;
     pais = novoPais;
-    cout << "Inseração de novo país: " << endl;
+    cout << "Inserção de novo país: " << endl;
     cout << "OBS: país será alocado na posição: " << cap << endl;
     pais[cap-1].id = cap;
     cout << "Digite o nome do país: " << endl;
@@ -270,6 +270,7 @@ int main(){
     importCSV(arqCSV, arqBin, pais, cap);
     menu(arqBin, pais, cap);
 
+    delete[] pais;
     arqBin.close();
     arqCSV.close();
     return 0;
