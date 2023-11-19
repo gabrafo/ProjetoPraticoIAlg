@@ -20,10 +20,10 @@ void importCSV(ifstream& arqCSV, fstream& arqBin, info*& pais, int cap){
     for(int i=0; i<cap; i++){
         arqCSV >> pais[i].id;
         arqCSV.ignore();
-        arqCSV.getline(pais[i].nome, 15, ';');
+        arqCSV.getline(pais[i].nome, 50, ';');
         arqCSV >> pais[i].pop;
         arqCSV.ignore();
-        arqCSV.getline(pais[i].idioma, 15, ';');
+        arqCSV.getline(pais[i].idioma, 50, ';');
         arqCSV.getline(pais[i].desc, 300);
     }
     cout << "Importação concluída." << endl;
@@ -52,6 +52,9 @@ void insertBin(fstream& arqBin, info*& pais, int& cap){
     pais[cap-1].id = cap;
     cout << "Digite o nome do país: " << endl;
     cin.getline(pais[cap-1].nome, sizeof(pais[cap-1].nome));
+    for (char& c : pais[cap-1].nome) {
+    c = toupper(c);
+    }
     cout << "Digite o número de habitantes desse país: " << endl;
     cin >> pais[cap-1].pop;
     cin.ignore();
@@ -88,6 +91,46 @@ void printBin(fstream& arqBin, info*& pais, int cap){
     }
 }
 
+void shellSortName(fstream& arqBin, info*& pais, int cap){ 
+    const int ciuraGaps[] = {1, 4, 10, 23, 57, 132, 301, 701, 1750};
+    int pos_gap = 8;
+
+    while (ciuraGaps[pos_gap] > cap){
+        pos_gap--;
+    }
+
+    int* idsOriginais = new int[cap];
+    for (int i = 0; i < cap; ++i) {
+        idsOriginais[i] = pais[i].id;
+    }
+
+    while (pos_gap >= 0) {
+        int gap = ciuraGaps[pos_gap];
+
+        for (int i = gap; i < cap; i++) {
+            info temp = pais[i];
+            int j = i;
+            while (j >= gap && strcmp(pais[j - gap].nome, temp.nome) > 0) {
+                pais[j] = pais[j - gap];
+                j -= gap;
+            }
+            pais[j] = temp;
+        }
+
+        pos_gap--;
+    }
+
+        for (int i = 0; i < cap; ++i) {
+        pais[i].id = idsOriginais[i];
+    }
+
+    delete[] idsOriginais;
+
+    cout << "Ordenação eficiente por nome concluída." << endl;
+
+    gravaBin(arqBin, pais, cap);
+}
+
 int main(){
     ifstream arqCSV;
     arqCSV.open("projetinho.csv");
@@ -108,6 +151,8 @@ int main(){
     importCSV(arqCSV, arqBin, pais, cap);
     insertBin(arqBin, pais, cap);
     leBin(arqBin, pais, cap);
+    printBin(arqBin, pais, cap);
+    shellSortName(arqBin, pais, cap);
     printBin(arqBin, pais, cap);
     arqBin.close();
     arqCSV.close();
