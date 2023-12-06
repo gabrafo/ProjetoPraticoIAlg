@@ -4,13 +4,11 @@ Tema: Países.
 */
 
 #include <iostream>
-
 #include <fstream>
-
 #include <cstring>
-
 using namespace std;
 
+// Declaração da estrutura de países
 struct info {
   int id;
   char nome[50];
@@ -72,16 +70,15 @@ void exportCSV(ofstream & arqOutCSV, info * & pais, int cap) {
 }
 
 // Método que grava arquivos do registro no arquivo binário
-void gravaBin(fstream & arqBin, info * & pais, int cap) {
-  for (int i = 0; i < cap; i++) {
-    arqBin.write((char * )( & pais[i].id), sizeof(int));
-    arqBin.write(pais[i].nome, sizeof(pais[i].nome));
-    arqBin.write((char * )( & pais[i].pop), sizeof(int));
-    arqBin.write(pais[i].idioma, sizeof(pais[i].idioma));
-    arqBin.write(pais[i].desc, sizeof(pais[i].desc));
-  }
-  cout << "Dados gravados no arquivo binário." << endl;
+void gravaBin(fstream &arqBin, info *&pais, int cap) {
+    arqBin.open("projetinho.dat", ios::binary | ios::out);
+    for (int i = 0; i < cap; i++) {
+        arqBin.write(reinterpret_cast<char *>(&pais[i]), sizeof(info));
+    }
+    arqBin.close();
+    cout << "Dados gravados no arquivo binário." << endl;
 }
+
 
 // Método que insere novos países no vetor de registros, usando realocação dinâmica de memória e chamando o método para gravar no arquivo binário
 void insertBin(fstream & arqBin, info * & pais, int & cap) {
@@ -110,10 +107,12 @@ void insertBin(fstream & arqBin, info * & pais, int & cap) {
 }
 
 // Método que lê dados do arquivo binário
-void leBin(fstream & arqBin, info * & pais, int cap) {
-  arqBin.read(reinterpret_cast < char * > ( & pais), sizeof(info) * cap);
-  cout << "Leitura dos dados do arquivo binário concluída." << endl;
+void leBin(fstream &arqBin, info *&pais, int cap) {
+    arqBin.seekg(0, ios::beg);
+    arqBin.read(reinterpret_cast<char *>(pais), sizeof(info) * cap);
+    cout << "Leitura dos dados do arquivo binário concluída." << endl;
 }
+
 
 // Função booleana que checa se o intervalo de impressão de dados requerido pelo usuário é válido ou não
 bool teste(int & posI, int & posF, int cap) {
@@ -133,58 +132,52 @@ bool teste(int & posI, int & posF, int cap) {
   }
 }
 
-// Método que imprime os países
-void printBin(fstream & arqBin, info * & pais, int cap) {
-  int posI, posF;
-  cout << "Deseja fazer a impressão de todos os elementos ou apenas de um intervalo específico? " << endl;
-  cout << "1. Impressão de todos os elementos\n" << "2. Impressão de um intervalo\n";
-  int resp;
-  cin >> resp;
-  cin.ignore();
+// Método que imprime os países diretamente do arquivo binário
+void printBin(fstream &arqBin, int cap) {
+    arqBin.open("projetinho.dat", ios::binary | ios::in);
 
-  if (resp == 1) {
-    for (int i = 0; i < cap; i++) {
-      char nomeAux[51];
-      strncpy(nomeAux, pais[i].nome, 50);
-      char idiomaAux[51];
-      strncpy(idiomaAux, pais[i].idioma, 50);
-      char descAux[301];
-      strncpy(descAux, pais[i].desc, 300);
+    if (not arqBin.is_open()) {
+        cout << "Erro ao abrir o arquivo binário." << endl;
+    } else {
+        int opcao;
+        cout << "Escolha uma opção:\n"
+                "1. Exibir todos os registros\n"
+                "2. Exibir um intervalo específico de registros\n"
+                "Opção: ";
+        cin >> opcao;
 
-      nomeAux[50] = '\0';
-      idiomaAux[50] = '\0';
-      descAux[300] = '\0';
+        if (opcao == 1) {
+            arqBin.seekg(0, ios::beg);
+            info temp;
+            for (int i = 0; i < cap; ++i) {
+                arqBin.read(reinterpret_cast<char *>(&temp), sizeof(info));
+                cout << "ID: " << temp.id << ", Nome: " << temp.nome << ", População: " << temp.pop << endl;
+            }
+        } else if (opcao == 2) {
+            int posI, posF;
+            cout << "Digite o intervalo de registros a serem exibidos (de 1 a " << cap << "):" << endl;
+            cout << "Posição inicial: ";
+            cin >> posI;
+            cout << "Posição final: ";
+            cin >> posF;
 
-      cout << "ID: " << pais[i].id << endl << "Nome: " << nomeAux << endl << "População: " <<
-        pais[i].pop << endl << "Idioma: " << idiomaAux << endl << "Descrição: " << descAux << endl;
-
-      cout << "--------" << endl;
+            if (posI < 1 or posF > cap or posI > posF) {
+                cout << "Intervalo inválido." << endl;
+            } else {
+                arqBin.seekg((posI - 1) * sizeof(info), ios::beg);
+                info temp;
+                for (int i = posI; i <= posF; i++) {
+                    arqBin.read(reinterpret_cast<char *>(&temp), sizeof(info));
+                    cout << "ID: " << temp.id << ", Nome: " << temp.nome << ", População: " << temp.pop << endl;
+                }
+            }
+        } else {
+            cout << "Opção inválida." << endl;
+        }
+        arqBin.close();
     }
-  } else if (resp == 2) {
-    cout << "OBS: Os intervalos são apenas crescentes." << endl;
-    if (teste(posI, posF, cap)) {
-      for (int i = posI - 1; i < posF; i++) {
-        char nomeAux[51];
-        strncpy(nomeAux, pais[i].nome, 50);
-        char idiomaAux[51];
-        strncpy(idiomaAux, pais[i].idioma, 50);
-        char descAux[301];
-        strncpy(descAux, pais[i].desc, 300);
-
-        nomeAux[50] = '\0';
-        idiomaAux[50] = '\0';
-        descAux[300] = '\0';
-
-        cout << "ID: " << pais[i].id << endl << "Nome: " << nomeAux << endl << "População: " <<
-          pais[i].pop << endl << "Idioma: " << idiomaAux << endl << "Descrição: " << descAux << endl;
-
-        cout << "--------" << endl;
-      }
-    }
-  } else {
-    cout << "Opção inválida." << endl;
-  }
 }
+
 
 // Método de ordenação eficiente via Shell Sort a partir da comparação do nome dos países (altera o ID deles também)
 void shellSortName(fstream & arqBin, info * & pais, int cap) {
@@ -318,6 +311,7 @@ bool buscaBinariaPorId(info * pais, int cap, int idBusca, info & resultado) {
 
 // Método de remoção lógica dos países
 void removePais(fstream & arqBin, info * & pais, int & cap, int posRemover) {
+    pais[posRemover].id = -1; 
   for (int i = posRemover; i < cap - 1; ++i) {
     pais[i] = pais[i + 1];
   }
@@ -351,7 +345,7 @@ void menu(ofstream & arqOutCSV, fstream & arqBin, info * & pais, int cap) {
     switch (opcao) {
     case 1:
       leBin(arqBin, pais, cap);
-      printBin(arqBin, pais, cap);
+      printBin(arqBin, cap);
       break;
     case 2:
       insertBin(arqBin, pais, cap);
@@ -397,11 +391,11 @@ void menu(ofstream & arqOutCSV, fstream & arqBin, info * & pais, int cap) {
       cin.ignore();
       if (resp == 1) {
         shellSortName(arqBin, pais, cap);
-        printBin(arqBin, pais, cap);
+        printBin(arqBin, cap);
         break;
       } else if (resp == 2) {
         shellSortPop(arqBin, pais, cap);
-        printBin(arqBin, pais, cap);
+        printBin(arqBin, cap);
         break;
       } else {
         cout << "Opção inválida." << endl;
@@ -451,6 +445,15 @@ void menu(ofstream & arqOutCSV, fstream & arqBin, info * & pais, int cap) {
   while (opcao != 0);
 }
 
+void leBinCout(fstream &arqBin, info *&pais, int cap) {
+    for (int i = 0; i < cap; ++i) {
+        arqBin.read(reinterpret_cast<char *>(&pais[i]), sizeof(info));
+        cout << "ID: " << pais[i].id << ", Nome: " << pais[i].nome << ", População: " << pais[i].pop << endl;
+    }
+    cout << "Leitura dos dados do arquivo binário concluída." << endl;
+}
+
+
 int main() {
   ifstream arqInCSV;
   ofstream arqOutCSV;
@@ -475,6 +478,7 @@ int main() {
 
   importCSV(arqInCSV, arqBin, pais, cap);
   menu(arqOutCSV, arqBin, pais, cap);
+  //leBinCout(arqBin, pais, cap);
 
   delete[] pais;
   arqInCSV.close();
