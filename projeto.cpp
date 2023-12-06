@@ -23,12 +23,14 @@ void menu(ofstream & arqOutCSV, fstream & arqBin, info * & pais, int cap);
 
 void gravaBin(fstream & arqBin, info * & pais, int cap);
 
+// Método que faz a troca o ID dos países, utilizada posteriormente para a ordenação via ID
 void swapID(info * & pais, int pos1, int pos2) {
   int aux = pais[pos1].id;
   pais[pos1].id = pais[pos2].id;
   pais[pos2].id = aux;
 }
 
+// Método que faz a troca das posições dos países, chamando também o método de troca de ID para a ordenação via ID
 void swap(info * & pais, int pos1, int pos2) {
   info aux = pais[pos1];
   pais[pos1] = pais[pos2];
@@ -36,6 +38,7 @@ void swap(info * & pais, int pos1, int pos2) {
   swapID(pais, pos1, pos2);
 }
 
+// Método que importa dados do CSV para os registros
 void importCSV(ifstream & arqInCSV, fstream & arqBin, info * & pais, int cap) {
   string lixo;
   getline(arqInCSV, lixo);
@@ -53,6 +56,7 @@ void importCSV(ifstream & arqInCSV, fstream & arqBin, info * & pais, int cap) {
   gravaBin(arqBin, pais, cap);
 }
 
+// Método que importa dados dos registros para o CSV
 void exportCSV(ofstream & arqOutCSV, info * & pais, int cap) {
   arqOutCSV << cap << endl;
 
@@ -67,6 +71,7 @@ void exportCSV(ofstream & arqOutCSV, info * & pais, int cap) {
   cout << "Exportação para o arquivo \"projetinhoOUT.csv\" concluída." << endl;
 }
 
+// Método que grava arquivos do registro no arquivo binário
 void gravaBin(fstream & arqBin, info * & pais, int cap) {
   for (int i = 0; i < cap; i++) {
     arqBin.write((char * )( & pais[i].id), sizeof(int));
@@ -78,6 +83,7 @@ void gravaBin(fstream & arqBin, info * & pais, int cap) {
   cout << "Dados gravados no arquivo binário." << endl;
 }
 
+// Método que insere novos países no vetor de registros, usando realocação dinâmica de memória e chamando o método para gravar no arquivo binário
 void insertBin(fstream & arqBin, info * & pais, int & cap) {
   cap += 1;
   info * novoPais = new info[cap];
@@ -103,11 +109,13 @@ void insertBin(fstream & arqBin, info * & pais, int & cap) {
   gravaBin(arqBin, pais, cap);
 }
 
+// Método que lê dados do arquivo binário
 void leBin(fstream & arqBin, info * & pais, int cap) {
   arqBin.read(reinterpret_cast < char * > ( & pais), sizeof(info) * cap);
   cout << "Leitura dos dados do arquivo binário concluída." << endl;
 }
 
+// Função booleana que checa se o intervalo de impressão de dados requerido pelo usuário é válido ou não
 bool teste(int & posI, int & posF, int cap) {
   cout << "O intervalo começa na posição: ";
   cin >> posI;
@@ -125,6 +133,7 @@ bool teste(int & posI, int & posF, int cap) {
   }
 }
 
+// Método que imprime os países
 void printBin(fstream & arqBin, info * & pais, int cap) {
   int posI, posF;
   cout << "Deseja fazer a impressão de todos os elementos ou apenas de um intervalo específico? " << endl;
@@ -177,6 +186,7 @@ void printBin(fstream & arqBin, info * & pais, int cap) {
   }
 }
 
+// Método de ordenação eficiente via Shell Sort a partir da comparação do nome dos países (altera o ID deles também)
 void shellSortName(fstream & arqBin, info * & pais, int cap) {
   const int ciuraGaps[] = {1, 4, 10, 23, 57, 132, 301, 701, 1750};
   int pos_gap = 8;
@@ -219,6 +229,7 @@ void shellSortName(fstream & arqBin, info * & pais, int cap) {
   gravaBin(arqBin, pais, cap);
 }
 
+// Método de ordenação eficiente via Shell Sort a partir da comparação da população dos países (altera o ID deles também)
 void shellSortPop(fstream & arqBin, info * & pais, int cap) {
   const int ciuraGaps[] = {1, 4, 10, 23, 57, 132, 301, 701, 1750};
   int pos_gap = 8;
@@ -261,6 +272,7 @@ void shellSortPop(fstream & arqBin, info * & pais, int cap) {
   gravaBin(arqBin, pais, cap);
 }
 
+// Método de busca sequencial por nome (ordena os países antes de buscar)
 void buscaPorNome(fstream & arqBin, info * pais, int cap,
   const char * nomeProcurado) {
   shellSortName(arqBin, pais, cap);
@@ -283,6 +295,7 @@ void buscaPorNome(fstream & arqBin, info * pais, int cap,
   }
 }
 
+// Método de busca binária a partir do ID dos países
 bool buscaBinariaPorId(info * pais, int cap, int idBusca, info & resultado) {
   int inicio = 0;
   int fim = cap - 1;
@@ -303,6 +316,7 @@ bool buscaBinariaPorId(info * pais, int cap, int idBusca, info & resultado) {
   return false;
 }
 
+// Método de remoção lógica dos países
 void removePais(fstream & arqBin, info * & pais, int & cap, int posRemover) {
   for (int i = posRemover; i < cap - 1; ++i) {
     pais[i] = pais[i + 1];
@@ -313,6 +327,7 @@ void removePais(fstream & arqBin, info * & pais, int & cap, int posRemover) {
   gravaBin(arqBin, pais, cap);
 }
 
+// Método de interface que direciona as operações requeridas pelo usuário
 void menu(ofstream & arqOutCSV, fstream & arqBin, info * & pais, int cap) {
   int opcao;
   int idRemover;
