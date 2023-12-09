@@ -135,6 +135,7 @@ bool teste(int & posI, int & posF, int cap) {
 // Método que imprime os países diretamente do arquivo binário
 void printBin(fstream &arqBin, int cap) {
     arqBin.open("projetinho.dat", ios::binary | ios::in);
+    
 
     if (not arqBin.is_open()) {
         cout << "Erro ao abrir o arquivo binário." << endl;
@@ -345,6 +346,7 @@ void menu(ofstream & arqOutCSV, fstream & arqBin, info * & pais, int cap) {
     switch (opcao) {
     case 1:
       leBin(arqBin, pais, cap);
+      gravaBin(arqBin, pais, cap);
       printBin(arqBin, cap);
       break;
     case 2:
@@ -476,7 +478,17 @@ int main() {
   int cap = cabecalho;
   info * pais = new info[cap];
 
-  importCSV(arqInCSV, arqBin, pais, cap);
+  // Verifica se o arquivo binário já possui dados
+  arqBin.seekg(0, ios::end);
+  int tamanhoArquivo = arqBin.tellg();
+  if (tamanhoArquivo > 0) {
+    // Se o arquivo binário já possui dados, faz a leitura desses dados
+    leBin(arqBin, pais, cap);
+  } else {
+    // Caso contrário, importa os dados do CSV para o arquivo binário
+    importCSV(arqInCSV, arqBin, pais, cap);
+  }
+
   menu(arqOutCSV, arqBin, pais, cap);
   //leBinCout(arqBin, pais, cap);
 
