@@ -1,5 +1,6 @@
 /*
 Nomes: Gabriel Fagundes Mesquita Sousa, Gabriel Luis Moreira Cantanhede, Bruno Souza Carvalho.
+Turma: 14B
 Tema: Países.
 */
 
@@ -152,7 +153,7 @@ void printBin(fstream &arqBin, int cap) {
             info temp;
             for (int i = 0; i < cap; ++i) {
                 arqBin.read(reinterpret_cast<char *>(&temp), sizeof(info));
-                cout << "ID: " << temp.id << ", Nome: " << temp.nome << ", População: " << temp.pop << endl;
+                cout << "ID: " << temp.id << ", Nome: " << temp.nome << ", População: " << ", Idioma: "<< temp.idioma << ", Descrição: " << temp.desc << endl;
             }
         } else if (opcao == 2) {
             int posI, posF;
@@ -169,7 +170,7 @@ void printBin(fstream &arqBin, int cap) {
                 info temp;
                 for (int i = posI; i <= posF; i++) {
                     arqBin.read(reinterpret_cast<char *>(&temp), sizeof(info));
-                    cout << "ID: " << temp.id << ", Nome: " << temp.nome << ", População: " << temp.pop << endl;
+                    cout << "ID: " << temp.id << ", Nome: " << temp.nome << ", População: " << ", Idioma: "<< temp.idioma << ", Descrição: " << temp.desc << endl;
                 }
             }
         } else {
@@ -447,15 +448,6 @@ void menu(ofstream & arqOutCSV, fstream & arqBin, info * & pais, int cap) {
   while (opcao != 0);
 }
 
-void leBinCout(fstream &arqBin, info *&pais, int cap) {
-    for (int i = 0; i < cap; ++i) {
-        arqBin.read(reinterpret_cast<char *>(&pais[i]), sizeof(info));
-        cout << "ID: " << pais[i].id << ", Nome: " << pais[i].nome << ", População: " << pais[i].pop << endl;
-    }
-    cout << "Leitura dos dados do arquivo binário concluída." << endl;
-}
-
-
 int main() {
   ifstream arqInCSV;
   ofstream arqOutCSV;
@@ -490,7 +482,6 @@ int main() {
   }
 
   menu(arqOutCSV, arqBin, pais, cap);
-  //leBinCout(arqBin, pais, cap);
 
   delete[] pais;
   arqInCSV.close();
