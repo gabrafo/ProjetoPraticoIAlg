@@ -35,3 +35,6 @@ A busca de registros pode ser feita por pelo menos dois campos diferentes, como 
 2. **Compile e execute o código**
 3. **Utilize as Funcionalidades da Aplicação:**
 Siga as instruções apresentadas para realizar operações como inserção, remoção, ordenação, busca e impressão de dados.
+
+## Licença
+Este projeto está sob a licença MIT. Consulte o arquivo LICENSE para mais detalhes.
