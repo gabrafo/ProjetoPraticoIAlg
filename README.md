@@ -30,8 +30,10 @@ A busca de registros pode ser feita por pelo menos dois campos diferentes, como 
 
 ## Como Utilizar o Projeto
 
-1. **Clone o Repositório:**
-   git clone https://github.com/seu-usuario/nome-do-repositorio.git
+1. **Clone o Repositório:**`
+```bash
+   git clone https://github.com/gabrafo/nome-do-repositorio.git
+```
 2. **Compile e execute o código**
 3. **Utilize as Funcionalidades da Aplicação:**
 Siga as instruções apresentadas para realizar operações como inserção, remoção, ordenação, busca e impressão de dados.
