@@ -32,7 +32,7 @@ A busca de registros pode ser feita por pelo menos dois campos diferentes, como 
 
 1. **Clone o Repositório:**`
 ```bash
-   git clone https://github.com/gabrafo/nome-do-repositorio.git
+   git clone https://github.com/gabrafo/projetopraticoialg.git
 ```
 2. **Compile e execute o código**
 3. **Utilize as Funcionalidades da Aplicação:**
