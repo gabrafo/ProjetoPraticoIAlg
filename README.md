@@ -40,3 +40,50 @@ Siga as instruções apresentadas para realizar operações como inserção, rem
 
 ## Licença
 Este projeto está sob a licença MIT. Consulte o arquivo LICENSE para mais detalhes.
+
+---
+
+# Practical Project: Binary File Data Manipulation Application
+
+This repository contains an application developed as a practical project for the *Introduction to Algorithms* course at the Federal University of Lavras (UFLA). The goal of this application is to manipulate data stored in a binary file while supporting a variety of operations.
+
+## Implemented Features
+
+### Data Storage
+
+Records are stored in a typed binary file, with built-in support for importing and exporting data in CSV format.
+
+### Data Sorting
+
+The application allows sorting records by two different fields. To accomplish this, it uses one of the efficient sorting algorithms: quick sort, merge sort, or shell sort. Sorting is performed in memory: all data is loaded from the file into an array, sorted, and then written back to disk.
+
+### Logical Deletion of Records
+
+Existing records can be logically deleted. Instead of being physically removed from the file, records are marked (e.g., with a negative key). The marked space can later be reused for new insertions. Logical deletions are fully resolved when the file is reordered.
+
+### Insertion of New Elements
+
+The application supports the insertion of new elements. New entries can be added at the end of the file or inserted into positions previously marked as deleted. There is also an option for sorted insertion, which helps maintain order and allows binary search to be used efficiently.
+
+### Record Search
+
+Records can be searched using at least two different fields, such as name, age, or address. Searches may be performed either sequentially or using binary search directly on the binary file. Note that binary search requires the data to be sorted.
+
+### Data Printing
+
+The application can print either the entire file or a specific segment defined by the user. Printing follows the physical order of the stored data. For ordered printing, the file must be sorted first.
+
+## How to Use the Project
+
+1. **Clone the Repository:**
+
+   ```bash
+   git clone https://github.com/gabrafo/projetopraticoialg.git
+   ```
+2. **Compile and run the code.**
+3. **Use the Application Features:**
+   Follow the on-screen instructions to perform operations such as insertion, deletion, sorting, searching, and printing of records.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for more details.
